@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="BASE_PATTERN">%d{yyyy-MM-dd HH:mm:ss,SSS} %-40.40logger{1.} %-5level</Property>
+        <Property name="REQUEST_RESPONSE_PATTERN">${BASE_PATTERN} %X{CorrelationId} %-3.3X{Direction}:</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${BASE_PATTERN} %msg%n"/>
+        </Console>
+        <RandomAccessFile name="RequestLog" fileName="client_rr.log" immediateFlush="false" append="true">
+            <PatternLayout pattern="${REQUEST_RESPONSE_PATTERN} %X{Method} %X{Path} %m%X{Headers}%ex%n" />
+        </RandomAccessFile>
+        <RandomAccessFile name="ResponseLog" fileName="client_rr.log" immediateFlush="false" append="true">
+            <PatternLayout pattern="${REQUEST_RESPONSE_PATTERN} %X{Status} %m%X{Headers}%ex%n" />
+        </RandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="codes.meo.dockerregistrylib.logging.ClientRequestLoggingFilter" level="INFO" additivity="false">
+            <appender-ref ref="RequestLog"/>
+        </Logger>
+        <Logger name="codes.meo.dockerregistrylib.logging.ClientResponseLoggingFilter" level="INFO" additivity="false">
+            <appender-ref ref="ResponseLog"/>
+        </Logger>
+        <Logger name="org.eclipse.jetty" level="error" additivity="false">
+            <appender-ref ref="Console"/>
+        </Logger>
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
